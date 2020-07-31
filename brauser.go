@@ -1,4 +1,4 @@
-package surfer
+package brauser
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// The surfer package is intended as a preconfigured lightweight http client
+// The brauser package is intended as a preconfigured lightweight http client
 // based on the go http.client with some useful defaults such as a cookiejar,
 // sane timeouts, a bit of logging and request retries.
 
