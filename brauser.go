@@ -1,12 +1,14 @@
 package brauser
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"net/http/cookiejar"
+	"net/url"
 	"time"
 )
 
@@ -70,6 +72,19 @@ func (w *WebClient) Post(path string, params map[string]string, payload io.Reade
 }
 func (w *WebClient) CustomRequest(method, path string, params map[string]string, payload io.Reader) (data []byte, err error) {
 	return w.fetch(method, path, params, payload)
+}
+func (w *WebClient) ExportCookies(file, site string) (err error) {
+	u, err := url.Parse(site)
+	if err != nil {
+		return err
+	}
+	data, err := json.Marshal(w.cl.Jar.Cookies(u))
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(file, data, 0644)
+
+	return
 }
 func (w *WebClient) fetch(method, path string, params map[string]string, payload io.Reader) (data []byte, err error) {
 	req, err := http.NewRequest(method, path, payload)
