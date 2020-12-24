@@ -112,7 +112,6 @@ retry:
 		// Call failed, try again as specified in retries
 		if tryCount < w.options.Tries {
 			w.logFetch("retry after", w.options.Timeout, "due to call failure,", err)
-
 			time.Sleep(w.options.Timeout)
 
 			tryCount++
