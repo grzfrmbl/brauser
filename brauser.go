@@ -125,9 +125,8 @@ func (w *WebClient) fetch(method, path string, params map[string]string, payload
 retry:
 
 	resp, err := w.cl.Do(req)
-	defer resp.Body.Close()
 
-	w.logFetch(resp.StatusCode)
+
 
 	if err != nil {
 		// Call failed, try again as specified in retries
@@ -137,10 +136,14 @@ retry:
 
 			tryCount++
 			goto retry
+		}else{
+			w.logFetch("aborting fetch")
 		}
 
 		return
 	}
+	defer resp.Body.Close()
+	w.logFetch(resp.StatusCode)
 
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
