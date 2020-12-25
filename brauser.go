@@ -78,6 +78,27 @@ func (w *WebClient) ExportCookies(file, site string) error {
 	if err != nil {
 		return err
 	}
+	d, err := ioutil.ReadFile(file)
+	if err != nil {
+		return err
+	}
+
+	var cookies []*http.Cookie
+
+	err = json.Unmarshal(d, &cookies)
+	if err != nil {
+		return err
+	}
+
+	w.cl.Jar.SetCookies(u, cookies)
+
+	return nil
+}
+func (w *WebClient) ImportCookies(file, site string) error {
+	u, err := url.Parse(site)
+	if err != nil {
+		return err
+	}
 	data, err := json.Marshal(w.cl.Jar.Cookies(u))
 	if err != nil {
 		return err
