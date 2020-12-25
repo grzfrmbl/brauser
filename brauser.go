@@ -78,6 +78,21 @@ func (w *WebClient) ExportCookies(file, site string) error {
 	if err != nil {
 		return err
 	}
+	data, err := json.Marshal(w.cl.Jar.Cookies(u))
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(file, data, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (w *WebClient) ImportCookies(file, site string) error {
+	u, err := url.Parse(site)
+	if err != nil {
+		return err
+	}
 	d, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
@@ -92,21 +107,6 @@ func (w *WebClient) ExportCookies(file, site string) error {
 
 	w.cl.Jar.SetCookies(u, cookies)
 
-	return nil
-}
-func (w *WebClient) ImportCookies(file, site string) error {
-	u, err := url.Parse(site)
-	if err != nil {
-		return err
-	}
-	data, err := json.Marshal(w.cl.Jar.Cookies(u))
-	if err != nil {
-		return err
-	}
-	err = ioutil.WriteFile(file, data, 0644)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 func (w *WebClient) fetch(method, path string, params map[string]string, payload io.Reader) (data []byte, err error) {
@@ -126,8 +126,6 @@ retry:
 
 	resp, err := w.cl.Do(req)
 
-
-
 	if err != nil {
 		// Call failed, try again as specified in retries
 		if tryCount < w.options.Tries {
@@ -136,7 +134,7 @@ retry:
 
 			tryCount++
 			goto retry
-		}else{
+		} else {
 			w.logFetch("aborting fetch")
 		}
 
